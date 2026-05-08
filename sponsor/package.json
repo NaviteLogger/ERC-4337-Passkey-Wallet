@@ -1,0 +1,25 @@
+{
+    "name": "sponsor",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "start": "tsx src/server.ts",
+        "test": "vitest run",
+        "lint:openapi": "redocly lint openapi.yaml",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@hono/node-server": "^1.13.7",
+        "hono": "^4.6.14",
+        "viem": "^2.21.55"
+    },
+    "devDependencies": {
+        "@redocly/cli": "^1.25.13",
+        "@types/node": "^22.9.0",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.2",
+        "vitest": "^2.1.8"
+    }
+}

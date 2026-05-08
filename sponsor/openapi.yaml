@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: ERC-4337 Sponsor Service
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  description: |
+    Off-chain service that signs `paymasterAndData` for the on-chain
+    SponsorPaymaster. A signing decision is made per UserOperation against an
+    allowlist policy; the signed digest is bound to (sender, nonce, callData,
+    gas fields, chainId, paymaster, validity window) so the sponsorship cannot
+    be replayed across chains, paymasters, or windows.
+
+servers:
+  - url: http://localhost:4000
+
+security: []
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Liveness check
+      responses:
+        "200":
+          description: Service is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, paymaster, chainId]
+                properties:
+                  ok:
+                    type: boolean
+                  paymaster:
+                    type: string
+                    pattern: "^0x[0-9a-fA-F]{40}$"
+                  chainId:
+                    type: integer
+
+  /sponsor:
+    post:
+      operationId: postSponsor
+      summary: Sign paymasterAndData for a UserOperation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SponsorRequest"
+      responses:
+        "200":
+          description: Signed paymasterAndData ready to attach to the UserOp.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SponsorResponse"
+        "400":
+          description: Malformed request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SponsorError"
+        "403":
+          description: Policy denied — target not in allowlist or allowlist empty (fail-closed).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SponsorError"
+
+components:
+  schemas:
+    PackedUserOp:
+      type: object
+      required:
+        - sender
+        - nonce
+        - initCode
+        - callData
+        - accountGasLimits
+        - preVerificationGas
+        - gasFees
+        - paymasterAndData
+        - signature
+      properties:
+        sender:
+          type: string
+          pattern: "^0x[0-9a-fA-F]{40}$"
+        nonce:
+          type: string
+          description: Decimal string (avoids JSON number precision loss for uint256).
+        initCode:
+          type: string
+          pattern: "^0x([0-9a-fA-F]{2})*$"
+        callData:
+          type: string
+          pattern: "^0x([0-9a-fA-F]{2})*$"
+        accountGasLimits:
+          type: string
+          pattern: "^0x[0-9a-fA-F]{64}$"
+        preVerificationGas:
+          type: string
+        gasFees:
+          type: string
+          pattern: "^0x[0-9a-fA-F]{64}$"
+        paymasterAndData:
+          type: string
+          pattern: "^0x([0-9a-fA-F]{2})*$"
+        signature:
+          type: string
+          pattern: "^0x([0-9a-fA-F]{2})*$"
+    SponsorRequest:
+      type: object
+      required: [userOp, target]
+      properties:
+        userOp:
+          $ref: "#/components/schemas/PackedUserOp"
+        target:
+          type: string
+          pattern: "^0x[0-9a-fA-F]{40}$"
+          description: The contract the UserOp's callData ultimately targets — checked against the allowlist.
+    SponsorResponse:
+      type: object
+      required: [paymasterAndData, validUntil, validAfter]
+      properties:
+        paymasterAndData:
+          type: string
+          pattern: "^0x[0-9a-fA-F]{258}$"
+          description: 129 bytes — paymaster (20) | verifGas (16) | postOpGas (16) | validUntil (6) | validAfter (6) | sig (65).
+        validUntil:
+          type: integer
+        validAfter:
+          type: integer
+    SponsorError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+        detail:
+          type: string

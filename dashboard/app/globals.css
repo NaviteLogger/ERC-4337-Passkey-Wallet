@@ -1,0 +1,160 @@
+:root {
+    color-scheme: dark;
+    --bg: #0b0d10;
+    --fg: #e7eaef;
+    --muted: #8b95a4;
+    --accent: #6cd1ff;
+    --good: #58d68d;
+    --bad: #ff7373;
+    --border: #1a1f25;
+    --code-bg: #11151a;
+    --pad: 1.5rem;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: var(--bg);
+    color: var(--fg);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3rem var(--pad);
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.5rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--accent);
+}
+
+p,
+ul,
+ol {
+    line-height: 1.55;
+    color: var(--muted);
+}
+
+ul,
+ol {
+    padding-left: 1.5rem;
+}
+
+ul li,
+ol li {
+    margin: 0.25rem 0;
+}
+
+.section {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    background: #0d1116;
+}
+
+button,
+input,
+select {
+    font: inherit;
+    color: var(--fg);
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+}
+
+button {
+    cursor: pointer;
+    background: #15202c;
+}
+
+button:hover:not(:disabled) {
+    background: #1c2a39;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+input {
+    width: 100%;
+    margin: 0.25rem 0 0.75rem;
+}
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+}
+
+pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+}
+
+.kv {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.kv dt {
+    color: var(--muted);
+}
+
+.kv dd {
+    margin: 0;
+    word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.status-ok {
+    color: var(--good);
+}
+
+.status-bad {
+    color: var(--bad);
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0.5rem 0;
+}
